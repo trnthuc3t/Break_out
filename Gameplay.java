@@ -1,4 +1,4 @@
-package Breakout;
+package Breakout2;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -9,19 +9,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Gameplay extends JPanel implements KeyListener, ActionListener {
+public class Gameplay extends JPanel implements KeyListener, ActionListener,MouseMotionListener {
 
     private boolean play = false;
     private int score = 0;
 
-    private int totalBricks = 21;
+    private int totalBricks;
 
     private Timer timer;
-    private int delay = 8;
+    private int delay = 6;
 
     private int playerX = 310;
 
@@ -30,15 +32,20 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private int ballXdir = -1;
     private int ballYdir = -2;
     
+    private int barWidth = 100;
+    
     private MapGenerator map;
     
     public Gameplay() {
     	// số hàng và số cột gạch
     	map = new MapGenerator(3, 7);
+    	totalBricks = map.getTotalCollision();
     	//
         addKeyListener(this);
+        addMouseMotionListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+        setCursor(null);
         timer = new Timer(delay, this);
         timer.start();
     }
@@ -62,7 +69,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         g.drawString(""+ score, 500,30);
         // THE PADDLE
         g.setColor(Color.green);
-        g.fillRect(playerX, 550, 100, 8);
+        g.fillRect(playerX, 550, barWidth, 8);
 
         // The ball
         g.setColor(Color.yellow);
@@ -76,7 +83,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         	g.drawString("You Won", 190,300);
         	
         	g.setFont(new Font("serif",Font.BOLD,20));
-        	g.drawString("Ấn Enter để Restart ", 230,300);
+        	g.drawString("Ấn Enter để Restart ", 230,350);
         }
         if(ballposY >570) {
         	play= false;
@@ -87,10 +94,10 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         	g.drawString("Game Over, Scores:", 190,300);
         	
         	g.setFont(new Font("serif",Font.BOLD,20));
-        	g.drawString("Ấn Enter để Restart ", 230,300);
+        	g.drawString("Ấn Enter để Restart ", 230,350);
         	 
         }
-        g.dispose();
+//        g.dispose();
     }
 
   
@@ -103,8 +110,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if (playerX >= 600) {
-                playerX = 600;
+            if (playerX + barWidth >= 690) {
+                playerX =690-barWidth;
             } else {
                 moverRight();
             }
@@ -151,7 +158,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 		//ball mơve nè
 		if(play) {
 			//ball chạm vật lí với thanh đỡ
-			if(new Rectangle(ballposX,ballposY,20,20).intersects(new Rectangle(playerX,550,100,8))) {
+			if(new Rectangle(ballposX,ballposY,20,20).intersects(new Rectangle(playerX,550,barWidth,8))) {
 				ballYdir=-ballYdir;
 			}
 			//
@@ -168,7 +175,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 						Rectangle brickRect = rect;
 						
 						if(ballRect.intersects(brickRect)) {
-							map.setBrickValue(0, i, j);
+							map.setBrickValue(map.getBrickValue(i, j)-1, i, j);
 							totalBricks--;
 							score+=5;
 							
@@ -197,15 +204,25 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 		}
 		repaint();
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getX()>0&&e.getX()<=700) {
+			if(e.getX()>=700-barWidth) {
+				play = true;
+				playerX=700-barWidth;
+			}else {
+				play = true;
+				playerX = e.getX();
+			}
+		}
+	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
