@@ -1,10 +1,9 @@
-package Breakout;
+package Breakout2;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Timer;
 
 public class MapGenerator {
 	public int map[][];
@@ -32,14 +31,31 @@ public class MapGenerator {
 					g.drawRect(j*brickWidth+80, i*brickMeight+50, brickWidth, brickMeight);
 					
 				}
+				if(map[i][j] == -1) {
+					g.setColor(Color.white);
+					g.fillRect(j*brickWidth+80, i*brickMeight+50, brickWidth, brickMeight);
+					
+					g.setStroke(new BasicStroke(3));
+					g.setColor(Color.black);
+					g.drawRect(j*brickWidth+80, i*brickMeight+50, brickWidth, brickMeight);
+					
+				}
 			}
 		}
 	}
 	public void setBrickValue(int value,int row,int col) {
 		map[row][col]=value;
 	}
-	
-	
-	
-	
+	public int getBrickValue(int row, int col) {
+		return map[row][col];
+	}
+	public int getTotalCollision() {
+		int total = 0;
+		for(int i=0;i<map.length;i++) {
+			for(int j=0;j<map[0].length;j++) {
+				total+=map[i][j];
+			}
+		}
+		return total;
+	}
 }
